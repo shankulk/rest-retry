@@ -1,31 +1,32 @@
 package com.shankulk.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 public class RestApiClient {
 
     private static final String URL = "https://imdb8.p.rapidapi.com/title/auto-complete?q=deathly%20hallows";
 
-    private final RestTemplate restTemplate;
+    private final RetryApiClient retryApiClient;
 
-    public RestApiClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    @Value("${rapid-api-key}")
+    private String rapidApiKey;
+
+    public RestApiClient(RetryApiClient retryApiClient) {
+        this.retryApiClient = retryApiClient;
     }
 
     public String getImdbTitle() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("x-rapidapi-host", "imdb8.p.rapidapi.com");
-        headers.add("x-rapidapi-key", "4405cd3973mshf0172fdb003179dp1194ebjsnfbe28331cced");
+        headers.add("x-rapidapi-key", rapidApiKey);
 
-        ResponseEntity<String> response = restTemplate
-            .exchange(URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        String response = retryApiClient
+            .get(URL, new HttpEntity<>(headers), String.class);
 
-        return response.getBody();
+        return response;
     }
 }

@@ -20,9 +20,9 @@ public class RetryApiClient implements BaseRestApiClient {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public <T> T get(String url, HttpMethod method, HttpEntity httpEntity, Class<T> responseType, Object... urlVariables) {
+    public <T> T get(String url, HttpEntity httpEntity, Class<T> responseType, Object... urlVariables) {
         ResponseEntity<T> responseEntity = retryTemplate
-            .execute(context -> restTemplate.exchange(url, method, httpEntity,
+            .execute(context -> restTemplate.exchange(url, HttpMethod.GET, httpEntity,
                 responseType, urlVariables));
 
         return responseEntity.getBody();

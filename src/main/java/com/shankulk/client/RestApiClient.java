@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class RestApiClient {
@@ -11,12 +12,14 @@ public class RestApiClient {
     private static final String URL = "https://imdb8.p.rapidapi.com/title/auto-complete?q=deathly%20hallows";
 
     private final RetryApiClient retryApiClient;
+    private final RestTemplate restTemplate;
 
     @Value("${rapid-api-key}")
     private String rapidApiKey;
 
-    public RestApiClient(RetryApiClient retryApiClient) {
+    public RestApiClient(RetryApiClient retryApiClient, RestTemplate restTemplate) {
         this.retryApiClient = retryApiClient;
+        this.restTemplate = restTemplate;
     }
 
     public String getImdbTitle() {
@@ -24,9 +27,7 @@ public class RestApiClient {
         headers.add("x-rapidapi-host", "imdb8.p.rapidapi.com");
         headers.add("x-rapidapi-key", rapidApiKey);
 
-        String response = retryApiClient
-            .get(URL, new HttpEntity<>(headers), String.class);
-
-        return response;
+        return retryApiClient
+            .get(restTemplate, URL, new HttpEntity<>(headers), String.class);
     }
 }

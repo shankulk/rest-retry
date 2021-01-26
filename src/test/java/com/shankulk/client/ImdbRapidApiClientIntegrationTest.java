@@ -29,11 +29,11 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class RestApiClientIntegrationTest {
+public class ImdbRapidApiClientIntegrationTest {
 
   @MockBean private RestTemplate restTemplate;
 
-  @Autowired private RestApiClient restApiClient;
+  @Autowired private ImdbRapidApiClient imdbRapidApiClient;
 
   private static Set<HttpStatus> allowedHttpStatusCodes() {
     return Set.of(BAD_GATEWAY, SERVICE_UNAVAILABLE, INTERNAL_SERVER_ERROR, GATEWAY_TIMEOUT);
@@ -51,7 +51,7 @@ public class RestApiClientIntegrationTest {
                 any(Object[].class)))
         .willThrow(new HttpServerErrorException(httpStatus));
 
-    Assertions.assertThrows(HttpServerErrorException.class, () -> restApiClient.getImdbTitle());
+    Assertions.assertThrows(HttpServerErrorException.class, () -> imdbRapidApiClient.getImdbTitle());
 
     verify(restTemplate, times(2))
         .exchange(
@@ -77,7 +77,7 @@ public class RestApiClientIntegrationTest {
                 any(Object[].class)))
         .willThrow(new HttpClientErrorException(httpStatus));
 
-    Assertions.assertThrows(HttpClientErrorException.class, () -> restApiClient.getImdbTitle());
+    Assertions.assertThrows(HttpClientErrorException.class, () -> imdbRapidApiClient.getImdbTitle());
 
     verify(restTemplate, times(1))
         .exchange(

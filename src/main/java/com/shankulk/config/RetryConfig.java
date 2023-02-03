@@ -44,6 +44,8 @@ public class RetryConfig {
             case SERVICE_UNAVAILABLE:
             case INTERNAL_SERVER_ERROR:
             case GATEWAY_TIMEOUT:
+            case FORBIDDEN:
+            case TOO_MANY_REQUESTS:
                 return simpleRetryPolicy;
             default:
                 return neverRetryPolicy;
